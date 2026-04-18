@@ -169,3 +169,15 @@ DecorateItems:
     Material: 'GRAY_STAINED_GLASS_PANE'
     Name: ' '
     Slots: [38-44]
+
+  # Island permission management (only visible for island owner)
+  Permission:
+    Material: 'NETHER_STAR'
+    Name: '#dcdde1ᴘʜâɴ qᴜʏềɴ ɪᴠᴀɴ sᴛᴏʀᴀɢᴇ'
+    Lore:
+    - ''
+    - '&7Quản lý quyền rút đồ'
+    - '&7cho thành viên đảo.'
+    - ''
+    - '&8[&6ᴄʟɪᴄᴋ&8] #dcdde1Mở phân quyền.'
+    Slot: 53

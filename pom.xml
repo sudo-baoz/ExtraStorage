@@ -34,6 +34,7 @@
 		<uniitem.version>2.7.0</uniitem.version>
 		<craftitem.version>1.4.1</craftitem.version>
 		<craftux.version>1.6.2</craftux.version>
+		<ss2.version>2025.2.1</ss2.version>
 	</properties>
 
 	<build>
@@ -234,6 +235,12 @@
 			<groupId>com.bgsoftware</groupId>
 			<artifactId>WildStackerAPI</artifactId>
 			<version>${wildstacker.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.bgsoftware</groupId>
+			<artifactId>SuperiorSkyblockAPI</artifactId>
+			<version>${ss2.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

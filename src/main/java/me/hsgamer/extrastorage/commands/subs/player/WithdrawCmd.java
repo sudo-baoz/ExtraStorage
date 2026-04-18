@@ -9,6 +9,7 @@ import me.hsgamer.extrastorage.commands.abstraction.CommandTarget;
 import me.hsgamer.extrastorage.configs.Message;
 import me.hsgamer.extrastorage.configs.Setting;
 import me.hsgamer.extrastorage.data.Constants;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
 import me.hsgamer.extrastorage.util.Digital;
 import me.hsgamer.extrastorage.util.ItemUtil;
 import me.hsgamer.extrastorage.util.Utils;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Command(value = "withdraw", usage = "/{label} withdraw <material-key> [amount]", permission = Constants.PLAYER_WITHDRAW_PERMISSION, target = CommandTarget.ONLY_PLAYER, minArgs = 1)
 public final class WithdrawCmd
@@ -31,6 +33,17 @@ public final class WithdrawCmd
     @Override
     public void execute(CommandContext context) {
         Player player = context.castToPlayer();
+
+        // Check island withdraw permission
+        if (setting.isIslandEnabled() && setting.getIslandProvider().isHooked()) {
+            IslandProvider ip = setting.getIslandProvider();
+            Optional<UUID> islandUUID = ip.getIslandUUID(player.getUniqueId());
+            if (islandUUID.isPresent() && !ip.isPlayerAllowedToWithdraw(player, null)) {
+                context.sendMessage(Message.getMessage("FAIL.island-no-withdraw-permission"));
+                return;
+            }
+        }
+
         Storage storage = instance.getUserManager().getUser(player).getStorage();
 
         String args0 = context.getArgs(0);

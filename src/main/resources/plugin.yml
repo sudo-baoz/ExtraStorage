@@ -18,6 +18,7 @@ softdepend:
   - UltimateStacker
   - RoseStacker
   - CommandSpy
+  - SuperiorSkyblock2
 
 commands:
   extrastorage:

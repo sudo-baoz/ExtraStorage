@@ -9,10 +9,12 @@ import me.hsgamer.extrastorage.commands.handler.CommandHandler;
 import me.hsgamer.extrastorage.configs.Message;
 import me.hsgamer.extrastorage.configs.Setting;
 import me.hsgamer.extrastorage.configs.types.BukkitConfigChecker;
+import me.hsgamer.extrastorage.data.island.IslandStorageManager;
 import me.hsgamer.extrastorage.data.log.Log;
 import me.hsgamer.extrastorage.data.user.UserManager;
 import me.hsgamer.extrastorage.data.worth.WorthManager;
 import me.hsgamer.extrastorage.gui.config.GuiConfig;
+import me.hsgamer.extrastorage.hooks.island.SuperiorSkyblockHook;
 import me.hsgamer.extrastorage.hooks.placeholder.ESPlaceholder;
 import me.hsgamer.extrastorage.listeners.ItemListener;
 import me.hsgamer.extrastorage.listeners.PickupListener;
@@ -42,6 +44,7 @@ public final class ExtraStorage extends JavaPlugin {
     private Message message;
 
     private UserManager userManager;
+    private IslandStorageManager islandStorageManager;
     private WorthManager worthManager;
 
     private Log log;
@@ -62,6 +65,11 @@ public final class ExtraStorage extends JavaPlugin {
     public void onLoad() {
         instance = this;
         this.firstLoad = (!this.getDataFolder().exists());
+
+        // Register SS2 custom privileges early (must be before islands are created)
+        if (getServer().getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
+            SuperiorSkyblockHook.registerPrivileges();
+        }
     }
 
     @Override
@@ -76,6 +84,9 @@ public final class ExtraStorage extends JavaPlugin {
 
         this.loadConfigs();
         this.userManager = new UserManager(this);
+        if (this.setting.isIslandEnabled() && this.setting.getIslandProvider().isHooked()) {
+            this.islandStorageManager = new IslandStorageManager(this);
+        }
         this.loadGuiFile();
         this.addExtraMetrics();
 
@@ -103,6 +114,10 @@ public final class ExtraStorage extends JavaPlugin {
         if (userManager != null) {
             userManager.stop();
             userManager.save();
+        }
+        if (islandStorageManager != null) {
+            islandStorageManager.stop();
+            islandStorageManager.save();
         }
     }
 
@@ -166,6 +181,10 @@ public final class ExtraStorage extends JavaPlugin {
 
     public UserManager getUserManager() {
         return this.userManager;
+    }
+
+    public IslandStorageManager getIslandStorageManager() {
+        return this.islandStorageManager;
     }
 
     public WorthManager getWorthManager() {

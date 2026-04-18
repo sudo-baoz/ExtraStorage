@@ -5,13 +5,18 @@ import me.hsgamer.extrastorage.Debug;
 import me.hsgamer.extrastorage.configs.types.BukkitConfig;
 import me.hsgamer.extrastorage.data.Constants;
 import me.hsgamer.extrastorage.hooks.economy.*;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
+import me.hsgamer.extrastorage.hooks.island.NoneIslandHook;
+import me.hsgamer.extrastorage.hooks.island.SuperiorSkyblockHook;
 import me.hsgamer.extrastorage.util.Digital;
 import me.hsgamer.extrastorage.util.ItemUtil;
 import me.hsgamer.extrastorage.util.SoundUtil;
 import me.hsgamer.extrastorage.util.Utils;
 import me.hsgamer.topper.storage.sql.core.SqlDatabaseSetting;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bstats.charts.SimplePie;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +42,9 @@ public final class Setting
 
     private EconomyProvider economyProvider;
     private String currency;
+
+    private IslandProvider islandProvider;
+    private boolean islandEnabled;
 
     private long maxSpace;
     private boolean blockedMining;
@@ -97,6 +105,17 @@ public final class Setting
             this.economyProvider = new NoneEconomyHook();
         }
         this.currency = config.getString("Economy.Currency", "");
+
+        this.islandEnabled = config.getBoolean("Island.Enabled", true);
+        if (this.islandEnabled && getServer().getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
+            this.islandProvider = new SuperiorSkyblockHook();
+        } else {
+            this.islandProvider = new NoneIslandHook();
+        }
+        if (this.islandProvider.isHooked()) {
+            instance.getLogger().info("Using SuperiorSkyblock2 as island provider.");
+            instance.getMetrics().addCustomChart(new SimplePie("island_provider", () -> "SuperiorSkyblock2"));
+        }
 
         this.autoUpdateTime = Digital.getBetween(10, Integer.MAX_VALUE, config.getInt("AutoUpdateTime", 30));
 
@@ -286,5 +305,13 @@ public final class Setting
 
     public Map<String, String> getName() {
         return this.name;
+    }
+
+    public IslandProvider getIslandProvider() {
+        return this.islandProvider;
+    }
+
+    public boolean isIslandEnabled() {
+        return this.islandEnabled;
     }
 }

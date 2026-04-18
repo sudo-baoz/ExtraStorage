@@ -68,6 +68,9 @@ SUCCESS:
     sender: '{prefix}&7You reset &r{item} &7in &b{player}''s &7storage.'
     target: '{prefix}&7You have been reset &r{item} &7in your storage by &b{player}&7.'
 
+  island-withdraw-granted: '{prefix}&aĐã cấp quyền rút đồ cho &e{player}&a.'
+  island-withdraw-revoked: '{prefix}&cĐã thu hồi quyền rút đồ của &e{player}&c.'
+
 WARN:
   confirm-cleanup: '{prefix}&6Click again to confirm your cleanup!'
 
@@ -92,6 +95,17 @@ FAIL:
   player-not-found: '{prefix}&cCould not find the player you have entered!'
   not-yourself: '{prefix}&cYou cannot do that yourself!'
 
+  # SuperiorSkyblock2 Island Messages
+  island-not-member: '{prefix}&cBạn không thuộc đảo nào!'
+  island-no-open-permission: '{prefix}&cBạn không có quyền mở kho đảo!'
+  island-no-withdraw-permission: '{prefix}&cBạn không có quyền rút đồ từ kho đảo!'
+  island-no-upgrade-permission: '{prefix}&cChỉ chủ đảo hoặc phó đảo mới được tăng kho!'
+  island-not-owner: '{prefix}&cChỉ chủ đảo mới có quyền làm điều này!'
+
+SUCCESS:
+  island-withdraw-granted: '{prefix}&aĐã cấp quyền rút đồ cho &e{player}&a.'
+  island-withdraw-revoked: '{prefix}&aĐã thu hồi quyền rút đồ của &e{player}&a.'
+
   max-space-not-used: '{prefix}&cYou cannot do this because the storage space is not used.'
   space-exceeded: '{prefix}&cCould not increase the storage space because the limit will be exceeded!'
   item-blacklisted: '{prefix}&cThe blacklisted item cannot be added to the filter!'
@@ -108,3 +122,13 @@ FAIL:
   cannot-be-sold: '{prefix}&cYou cannot sell this item!'
   invalid-item: '{prefix}&cThis item is invalid!'
   item-already-whitelisted: '{prefix}&cThat item is already in the whitelist!'
+
+# Permission GUI
+PERMISSION:
+  title: '&8Island Permission'
+  back: '&8[&c\u2190&8] &7Back to Storage'
+  member-name: '&e{name}'
+  can-withdraw: '&a\u2714 Can Withdraw'
+  cannot-withdraw: '&c\u2716 Cannot Withdraw'
+  click-to-toggle: '&7[Left Click] Toggle permission'
+  owner-label: '&6\u2605 Island Owner'
