@@ -1,4 +1,4 @@
-name: ExtraStorage
+name: TaroStorage
 version: '${project.version}'
 main: me.hsgamer.extrastorage.ExtraStorage
 api-version: 1.16
@@ -23,7 +23,7 @@ softdepend:
 commands:
   extrastorage:
     description: 'Commands for players.'
-    aliases: [ exstorage, storage, es, kho ]
+    aliases: [ tarostorage, tstorage, exstorage, storage, es, kho ]
   esadmin:
     description: 'Commands for administrators.'
     aliases: [ ]
@@ -67,6 +67,9 @@ permissions:
           exstorage.command.player.withdraw:
             default: op
             description: 'Allows the player to withdraw items by using the command.'
+          exstorage.command.player.permission:
+            default: true
+            description: 'Allows the player to manage island withdraw permission with command.'
       exstorage.command.admin.*:
         default: false
         description: 'Allows the player to use all admin commands.'

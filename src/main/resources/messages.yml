@@ -1,4 +1,4 @@
-PREFIX: '&8[&eᴇxᴛʀᴀ&bsᴛᴏʀᴀɢᴇ&8] &8→ &r'
+PREFIX: '&8[&6Taro &eStorage&8] &8→ &r'
 
 STATUS:
   enabled: '&aᴇɴᴀʙʟᴇ'
@@ -18,6 +18,7 @@ HELP:
     partner: '&8 > &c/{label} partner [add|remove|clear] [player] &f: &7Manage your partners.'
     sell: '&8 > &c/{label} sell [<material-key> [amount]] &f: &7Sell your items.'
     withdraw: '&8 > &c/{label} withdraw <material-key> [amount] &f: &7Withdraw your items.'
+    permission: '&8 > &c/{label} permission <grant|revoke> <player> &f: &7Manage island withdraw permission.'
   Admin:
     help: '&8 > &c/{label} [help|?] &f: &7Show this help page.'
     open: '&8 > &c/{label} open <player> &f: &7Open another player''s storage.'
@@ -48,6 +49,8 @@ SUCCESS:
   item-sold: '{prefix}&aYou sold &ex{amount} &r{item} &afor &2${price}&a.'
   item-added-to-whitelist: '{prefix}&7You added &r{item} &7to whitelist.'
   item-removed-from-whitelist: '{prefix}&7You removed &r{item} &7from whitelist.'
+  island-withdraw-granted: '{prefix}&aĐã cấp quyền rút đồ cho &e{player}&a.'
+  island-withdraw-revoked: '{prefix}&aĐã thu hồi quyền rút đồ cho &e{player}&a.'
 
   Add:
     self: '{prefix}&7You added &ex{quantity} {item} &7to your storage.'
@@ -67,9 +70,6 @@ SUCCESS:
     all-sender: '{prefix}&7You reset quantity of all items in &b{player}''s &7storage.'
     sender: '{prefix}&7You reset &r{item} &7in &b{player}''s &7storage.'
     target: '{prefix}&7You have been reset &r{item} &7in your storage by &b{player}&7.'
-
-  island-withdraw-granted: '{prefix}&aĐã cấp quyền rút đồ cho &e{player}&a.'
-  island-withdraw-revoked: '{prefix}&cĐã thu hồi quyền rút đồ của &e{player}&c.'
 
 WARN:
   confirm-cleanup: '{prefix}&6Click again to confirm your cleanup!'
@@ -94,34 +94,32 @@ FAIL:
   must-enter-player: '{prefix}&cPlease enter the player''s name you would like to do this!'
   player-not-found: '{prefix}&cCould not find the player you have entered!'
   not-yourself: '{prefix}&cYou cannot do that yourself!'
+  player-not-partner: '{prefix}&cYou are not the partner of &e{player}&c!'
+  already-partner: '{prefix}&cThat player is already your partner!'
+  not-partner: '{prefix}&cThat player is not your partner!'
+  partners-list-empty: '{prefix}&cYour partners list is empty!'
+  item-not-in-storage: '{prefix}&cThat item cannot be found in &e{player}''s &cstorage!'
+  not-enough-item: '{prefix}&cYou (or your partner) don''t have enough &r{item} &cto do that!'
+  not-enough-item-in-inventory: '{prefix}&cYou don''t have enough &r{item} &cin your inventory!'
+  item-not-filtered: '{prefix}&cYou cannot transfer items that are not in the filter to the storage!'
+  item-blacklisted: '{prefix}&cThe blacklisted item cannot be added to the filter!'
+  item-already-whitelisted: '{prefix}&cThat item is already in the whitelist!'
+  invalid-item: '{prefix}&cThis item is invalid!'
+  cannot-be-sold: '{prefix}&cYou cannot sell this item!'
+  inventory-is-full: '{prefix}&cYour inventory is full!'
+  storage-is-full: '{prefix}&cCould not add items to storage because it is full!'
+  max-space-not-used: '{prefix}&cYou cannot do this because the storage space is not used.'
+  space-exceed: '{prefix}&cCould not increase the storage space because the limit will be exceeded!'
 
   # SuperiorSkyblock2 Island Messages
   island-not-member: '{prefix}&cBạn không thuộc đảo nào!'
   island-no-open-permission: '{prefix}&cBạn không có quyền mở kho đảo!'
   island-no-withdraw-permission: '{prefix}&cBạn không có quyền rút đồ từ kho đảo!'
+  island-no-sell-permission: '{prefix}&cThành viên thường không thể bán đồ từ kho đảo!'
   island-no-upgrade-permission: '{prefix}&cChỉ chủ đảo hoặc phó đảo mới được tăng kho!'
   island-not-owner: '{prefix}&cChỉ chủ đảo mới có quyền làm điều này!'
-
-SUCCESS:
-  island-withdraw-granted: '{prefix}&aĐã cấp quyền rút đồ cho &e{player}&a.'
-  island-withdraw-revoked: '{prefix}&aĐã thu hồi quyền rút đồ của &e{player}&a.'
-
-  max-space-not-used: '{prefix}&cYou cannot do this because the storage space is not used.'
-  space-exceeded: '{prefix}&cCould not increase the storage space because the limit will be exceeded!'
-  item-blacklisted: '{prefix}&cThe blacklisted item cannot be added to the filter!'
-  player-not-partner: '{prefix}&cYou are not the partner of &e{player}&c!'
-  inventory-is-full: '{prefix}&cYour inventory is full!'
-  storage-is-full: '{prefix}&cCould not add items to storage because it is full!'
-  not-enough-item: '{prefix}&cYou (or your partner) don''t have enough &r{item} &cto do that!'
-  not-enough-item-in-inventory: '{prefix}&cYou don''t have enough &r{item} &cin your inventory!'
-  item-not-filtered: '{prefix}&cYou cannot transfer items that are not in the filter to the storage!'
-  already-partner: '{prefix}&cThat player is already your partner!'
-  not-partner: '{prefix}&cThat player is not your partner!'
-  partners-list-empty: '{prefix}&cYour partners list is empty!'
-  item-not-in-storage: '{prefix}&cThat item cannot be found in &e{player}''s &cstorage!'
-  cannot-be-sold: '{prefix}&cYou cannot sell this item!'
-  invalid-item: '{prefix}&cThis item is invalid!'
-  item-already-whitelisted: '{prefix}&cThat item is already in the whitelist!'
+  player-not-in-island: '{prefix}&cNgười chơi &e{player} &ckhông thuộc đảo của bạn!'
+  invalid-permission-action: '{prefix}&cHành động không hợp lệ. Dùng: &egrant &choặc &erevoke&c.'
 
 # Permission GUI
 PERMISSION:

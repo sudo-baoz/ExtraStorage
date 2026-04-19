@@ -4,6 +4,7 @@ import io.github.projectunified.minelib.scheduler.async.AsyncScheduler;
 import io.github.projectunified.minelib.scheduler.common.task.Task;
 import me.hsgamer.extrastorage.ExtraStorage;
 import me.hsgamer.extrastorage.api.user.User;
+import me.hsgamer.extrastorage.data.island.IslandAPI;
 import me.hsgamer.extrastorage.data.stub.StubUser;
 import me.hsgamer.extrastorage.util.ItemUtil;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
@@ -140,6 +141,9 @@ public final class UserManager extends SimpleDataHolder<UUID, UserImpl> {
     }
 
     public User getUser(OfflinePlayer player) {
+        if (instance.getSetting().isIslandEnabled() && instance.getSetting().getIslandProvider().isHooked()) {
+            return IslandAPI.getUser(player.getUniqueId());
+        }
         return getUser(player.getUniqueId());
     }
 

@@ -41,7 +41,7 @@ public final class IslandAPI {
             return instance.getUserManager().getUser(playerUuid);
         }
 
-        return new IslandUser(islandUUID.get(), islandManager.getIslandEntry(islandUUID.get()));
+        return new IslandUser(islandUUID.get(), islandManager.getIslandEntry(islandUUID.get()), playerUuid);
     }
 
     /**

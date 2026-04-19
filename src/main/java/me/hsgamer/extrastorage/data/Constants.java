@@ -13,6 +13,7 @@ public final class Constants {
     public static final String PLAYER_PARTNER_PERMISSION = PREFIX + ".command.player.partner";
     public static final String PLAYER_SELL_PERMISSION = PREFIX + ".command.player.sell";
     public static final String PLAYER_WITHDRAW_PERMISSION = PREFIX + ".command.player.withdraw";
+    public static final String PLAYER_ISLAND_PERMISSION_PERMISSION = PREFIX + ".command.player.permission";
     public static final String ADMIN_HELP_PERMISSION = PREFIX + ".command.admin.help";
     public static final String ADMIN_OPEN_PERMISSION = PREFIX + ".command.admin.open";
     public static final String ADMIN_SPACE_PERMISSION = PREFIX + ".command.admin.space";

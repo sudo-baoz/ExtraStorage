@@ -8,8 +8,10 @@ import me.hsgamer.extrastorage.commands.abstraction.CommandListener;
 import me.hsgamer.extrastorage.commands.abstraction.CommandTarget;
 import me.hsgamer.extrastorage.commands.subs.player.*;
 import me.hsgamer.extrastorage.configs.Message;
+import me.hsgamer.extrastorage.configs.Setting;
 import me.hsgamer.extrastorage.data.Constants;
 import me.hsgamer.extrastorage.gui.StorageGUI;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
 import me.hsgamer.extrastorage.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,6 +20,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,13 +36,20 @@ public final class PlayerCommands
         this.add(new PartnerCmd());
         this.add(new SellCmd());
         this.add(new WithdrawCmd());
+        this.add(new IslandPermissionCmd());
     }
 
     @Override
     public void execute(CommandContext context) {
         Player player = context.castToPlayer();
+        Setting setting = instance.getSetting();
+        IslandProvider islandProvider = setting.getIslandProvider();
 
         if (context.getArgsLength() == 0) {
+            if (setting.isIslandEnabled() && islandProvider.isHooked() && !islandProvider.getIslandUUID(player.getUniqueId()).isPresent()) {
+                context.sendMessage(Message.getMessage("FAIL.island-not-member"));
+                return;
+            }
             new StorageGUI(player, null).open();
             return;
         }
@@ -76,7 +87,8 @@ public final class PlayerCommands
                 this.hasPermission(sender, Constants.PLAYER_FILTER_PERMISSION) ? "filter" : "",
                 this.hasPermission(sender, Constants.PLAYER_PARTNER_PERMISSION) ? "partner" : "",
                 this.hasPermission(sender, Constants.PLAYER_SELL_PERMISSION) ? "sell" : "",
-                this.hasPermission(sender, Constants.PLAYER_WITHDRAW_PERMISSION) ? "withdraw" : ""
+                this.hasPermission(sender, Constants.PLAYER_WITHDRAW_PERMISSION) ? "withdraw" : "",
+                this.hasPermission(sender, Constants.PLAYER_ISLAND_PERMISSION_PERMISSION) ? "permission" : ""
         );
 
         String args0 = args[0].toLowerCase();
@@ -100,9 +112,30 @@ public final class PlayerCommands
                             .filter(item -> (item.getKey().toLowerCase().startsWith(args1)) && (item.getQuantity() > 0))
                             .map(Item::getKey)
                             .collect(Collectors.toList());
+                case "permission":
+                    return Stream.of("grant", "revoke")
+                            .filter(cmd -> cmd.startsWith(args1))
+                            .collect(Collectors.toList());
                 default:
                     return null;
             }
+        }
+
+        if (args.length == 3 && args0.equals("permission")) {
+            if (!instance.getSetting().isIslandEnabled() || !instance.getSetting().getIslandProvider().isHooked()) {
+                return null;
+            }
+            Optional<UUID> islandUUID = instance.getSetting().getIslandProvider().getIslandUUID(player.getUniqueId());
+            if (!islandUUID.isPresent()) {
+                return null;
+            }
+            String args2 = args[2].toLowerCase();
+            return instance.getSetting().getIslandProvider().getIslandMembers(islandUUID.get())
+                    .stream()
+                    .map(Bukkit::getOfflinePlayer)
+                    .map(OfflinePlayer::getName)
+                    .filter(name -> name != null && name.toLowerCase().startsWith(args2))
+                    .collect(Collectors.toList());
         }
 
         return null;

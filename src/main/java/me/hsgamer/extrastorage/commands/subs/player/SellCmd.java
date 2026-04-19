@@ -9,6 +9,7 @@ import me.hsgamer.extrastorage.commands.abstraction.CommandTarget;
 import me.hsgamer.extrastorage.configs.Message;
 import me.hsgamer.extrastorage.data.Constants;
 import me.hsgamer.extrastorage.gui.SellGUI;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
 import me.hsgamer.extrastorage.util.Digital;
 import me.hsgamer.extrastorage.util.Utils;
 import org.bukkit.entity.Player;
@@ -22,6 +23,14 @@ public final class SellCmd
     @Override
     public void execute(CommandContext context) {
         Player player = context.castToPlayer();
+        IslandProvider islandProvider = instance.getSetting().getIslandProvider();
+
+        if (instance.getSetting().isIslandEnabled() && islandProvider.isHooked() && islandProvider.getIslandUUID(player.getUniqueId()).isPresent()) {
+            if (!islandProvider.isPlayerAllowedToUpgrade(player)) {
+                context.sendMessage(Message.getMessage("FAIL.island-no-sell-permission"));
+                return;
+            }
+        }
 
         if (context.getArgsLength() == 0) {
             new SellGUI(player).open();

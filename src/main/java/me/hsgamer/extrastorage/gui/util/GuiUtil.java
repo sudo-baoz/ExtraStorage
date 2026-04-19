@@ -6,6 +6,7 @@ import me.hsgamer.extrastorage.gui.PartnerGUI;
 import me.hsgamer.extrastorage.gui.SellGUI;
 import me.hsgamer.extrastorage.gui.StorageGUI;
 import me.hsgamer.extrastorage.gui.base.BaseGUI;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -42,6 +43,15 @@ public final class GuiUtil {
             GuiEntry entry = GUI_SEQUENCE.get(nextIndex);
 
             if (player.isOp() || player.hasPermission(entry.permission)) {
+                if (entry.guiClass == SellGUI.class) {
+                    IslandProvider islandProvider = me.hsgamer.extrastorage.ExtraStorage.getInstance().getSetting().getIslandProvider();
+                    if (me.hsgamer.extrastorage.ExtraStorage.getInstance().getSetting().isIslandEnabled()
+                            && islandProvider.isHooked()
+                            && islandProvider.getIslandUUID(player.getUniqueId()).isPresent()
+                            && !islandProvider.isPlayerAllowedToUpgrade(player)) {
+                        continue;
+                    }
+                }
                 entry.opener.apply(player).open();
                 return;
             }

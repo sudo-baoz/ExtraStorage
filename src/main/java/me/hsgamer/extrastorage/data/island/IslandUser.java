@@ -19,21 +19,27 @@ import java.util.stream.Collectors;
  */
 public class IslandUser implements User {
     private final UUID islandUUID;
+    private final UUID actorUUID;
     private final DataEntry<UUID, me.hsgamer.extrastorage.data.user.UserImpl> islandEntry;
 
     public IslandUser(UUID islandUUID, DataEntry<UUID, me.hsgamer.extrastorage.data.user.UserImpl> islandEntry) {
+        this(islandUUID, islandEntry, null);
+    }
+
+    public IslandUser(UUID islandUUID, DataEntry<UUID, me.hsgamer.extrastorage.data.user.UserImpl> islandEntry, UUID actorUUID) {
         this.islandUUID = islandUUID;
         this.islandEntry = islandEntry;
+        this.actorUUID = actorUUID;
     }
 
     @Override
     public OfflinePlayer getOfflinePlayer() {
-        return Bukkit.getOfflinePlayer(islandUUID);
+        return Bukkit.getOfflinePlayer(actorUUID != null ? actorUUID : islandUUID);
     }
 
     @Override
     public Player getPlayer() {
-        return Bukkit.getPlayer(islandUUID);
+        return actorUUID == null ? null : Bukkit.getPlayer(actorUUID);
     }
 
     @Override
@@ -43,12 +49,14 @@ public class IslandUser implements User {
 
     @Override
     public String getName() {
-        return islandUUID.toString();
+        OfflinePlayer player = getOfflinePlayer();
+        String name = player.getName();
+        return name == null ? islandUUID.toString() : name;
     }
 
     @Override
     public boolean isOnline() {
-        return Bukkit.getPlayer(islandUUID) != null;
+        return getPlayer() != null;
     }
 
     @Override
@@ -58,7 +66,8 @@ public class IslandUser implements User {
 
     @Override
     public boolean hasPermission(String permission) {
-        return false;
+        Player player = getPlayer();
+        return player != null && (player.isOp() || player.hasPermission(permission));
     }
 
     @Override

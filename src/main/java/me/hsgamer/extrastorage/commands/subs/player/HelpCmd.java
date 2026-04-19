@@ -32,6 +32,9 @@ public final class HelpCmd
         if (context.hasPermission(Constants.PLAYER_WITHDRAW_PERMISSION)) {
             context.sendMessage(Message.getMessage("HELP.Player.withdraw").replaceAll(LABEL_REGEX, context.getLabel()));
         }
+        if (context.hasPermission(Constants.PLAYER_ISLAND_PERMISSION_PERMISSION)) {
+            context.sendMessage(Message.getMessage("HELP.Player.permission").replaceAll(LABEL_REGEX, context.getLabel()));
+        }
         context.sendMessage(Message.getMessage("HELP.footer").replaceAll(VERSION_REGEX, instance.getDescription().getVersion()));
     }
 

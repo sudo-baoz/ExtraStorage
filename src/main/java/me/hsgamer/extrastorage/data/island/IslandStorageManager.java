@@ -47,7 +47,8 @@ public final class IslandStorageManager extends SimpleDataHolder<UUID, UserImpl>
             this.storage.onRegister();
             this.storage.load().forEach((uuid, user) -> {
                 if (user.space != 0 || user.items.values().stream().mapToLong(item -> item.quantity).sum() != 0) {
-                    getOrCreateEntry(uuid).setValue(user, false);
+                    // Keep island shared storage enabled by default for all members.
+                    getOrCreateEntry(uuid).setValue(user.withStatus(true), false);
                 }
             });
         } catch (Exception e) {
@@ -100,7 +101,7 @@ public final class IslandStorageManager extends SimpleDataHolder<UUID, UserImpl>
                         key -> key,
                         key -> ItemImpl.EMPTY.withFiltered(true)
                 ));
-        entry.setValue(user -> user.withItems(map).withSpace(instance.getSetting().getMaxSpace()), false);
+        entry.setValue(user -> user.withItems(map).withSpace(instance.getSetting().getMaxSpace()).withStatus(true), false);
     }
 
     @Override

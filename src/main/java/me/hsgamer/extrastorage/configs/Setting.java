@@ -107,7 +107,7 @@ public final class Setting
         this.currency = config.getString("Economy.Currency", "");
 
         this.islandEnabled = config.getBoolean("Island.Enabled", true);
-        if (this.islandEnabled && getServer().getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
+        if (this.islandEnabled && Bukkit.getServer().getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
             this.islandProvider = new SuperiorSkyblockHook();
         } else {
             this.islandProvider = new NoneIslandHook();

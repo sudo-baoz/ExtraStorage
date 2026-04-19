@@ -68,7 +68,7 @@ public class PermissionGUI extends BaseGUI<PermissionGUI.SortType> {
                     boolean currentPerm = islandProvider.hasWithdrawPermission(islandUUID, memberUUID);
                     if (currentPerm) {
                         islandProvider.revokeWithdrawPermission(islandUUID, memberUUID);
-                        player.sendMessage(Message.getMessage("FAIL.island-withdraw-revoked")
+                        player.sendMessage(Message.getMessage("SUCCESS.island-withdraw-revoked")
                                 .replaceAll(Utils.getRegex("player"), offlinePlayer.getName() != null ? offlinePlayer.getName() : memberUUID.toString()));
                     } else {
                         islandProvider.grantWithdrawPermission(islandUUID, memberUUID);

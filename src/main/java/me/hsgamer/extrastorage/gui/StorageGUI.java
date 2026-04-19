@@ -4,14 +4,12 @@ import io.github.projectunified.craftux.common.Button;
 import io.github.projectunified.craftux.common.Mask;
 import io.github.projectunified.craftux.common.Position;
 import io.github.projectunified.craftux.mask.HybridMask;
-import io.github.projectunified.craftux.simple.SimpleButtonMask;
 import me.hsgamer.extrastorage.ExtraStorage;
 import me.hsgamer.extrastorage.api.item.Item;
 import me.hsgamer.extrastorage.api.user.User;
 import me.hsgamer.extrastorage.configs.Message;
 import me.hsgamer.extrastorage.configs.Setting;
 import me.hsgamer.extrastorage.data.Constants;
-import me.hsgamer.extrastorage.data.island.IslandAPI;
 import me.hsgamer.extrastorage.data.island.IslandStorageManager;
 import me.hsgamer.extrastorage.data.island.IslandUser;
 import me.hsgamer.extrastorage.data.log.Log;
@@ -61,15 +59,12 @@ public class StorageGUI extends BaseGUI<StorageGUI.SortType> {
         if (partner == null && setting.isIslandEnabled() && islandProvider.isHooked()) {
             Optional<UUID> islandUUID = islandProvider.getIslandUUID(player.getUniqueId());
             if (islandUUID.isPresent()) {
-                // Check if player is allowed to open island storage
-                if (!islandProvider.isPlayerAllowedToOpenStorage(player)) {
-                    player.sendMessage(Message.getMessage("FAIL.island-no-open-permission"));
-                    return ExtraStorage.getInstance().getUserManager().getUser(player);
-                }
                 IslandStorageManager islandManager = ExtraStorage.getInstance().getIslandStorageManager();
                 if (islandManager != null) {
-                    return new IslandUser(islandUUID.get(), islandManager.getIslandEntry(islandUUID.get()));
+                    return new IslandUser(islandUUID.get(), islandManager.getIslandEntry(islandUUID.get()), player.getUniqueId());
                 }
+            } else {
+                player.sendMessage(Message.getMessage("FAIL.island-not-member"));
             }
         }
         return ExtraStorage.getInstance().getUserManager().getUser(player);
@@ -209,7 +204,7 @@ public class StorageGUI extends BaseGUI<StorageGUI.SortType> {
                             }
 
                             // Check island withdraw permission
-                            if (isIslandStorage && !setting.getIslandProvider().isPlayerAllowedToWithdraw(player, partner.getUUID())) {
+                            if (isIslandStorage && !setting.getIslandProvider().isPlayerAllowedToWithdraw(player, null)) {
                                 player.sendMessage(Message.getMessage("FAIL.island-no-withdraw-permission"));
                                 return;
                             }
@@ -305,36 +300,6 @@ public class StorageGUI extends BaseGUI<StorageGUI.SortType> {
         putSortConfig(sortConfigMap, SortType.QUANTITY, section, "SortByQuantity");
         putSortConfig(sortConfigMap, SortType.UNFILTER, section, "SortByUnfilter");
         addSortMask(mask, sortConfigMap);
-
-        // Island permission button - only for island owner/co-owner
-        ConfigurationSection permSection = section.getConfigurationSection("Permission");
-        if (permSection != null && isIslandStorage) {
-            IslandProvider ip = ExtraStorage.getInstance().getSetting().getIslandProvider();
-            if (ip.canGrantWithdrawPermission(player)) {
-                GUIItem permItem = GUIItem.get(permSection, null);
-                List<Position> permSlots = getSlots(permSection);
-                SimpleButtonMask permMask = new SimpleButtonMask();
-                mask.add(permMask);
-                permMask.setButton(permSlots, (uuid, actionItem) -> {
-                    permItem.apply(actionItem, user, s -> s);
-                    actionItem.setAction(InventoryClickEvent.class, event -> {
-                        // Open permission GUI
-                        UUID islandUUID = ExtraStorage.getInstance().getSetting().getIslandProvider()
-                                .getIslandUUID(player.getUniqueId()).orElse(null);
-                        if (islandUUID != null) {
-                            Collection<UUID> members = ExtraStorage.getInstance().getSetting().getIslandProvider()
-                                    .getIslandMembers(islandUUID);
-                            Optional<UUID> ownerUUID = ExtraStorage.getInstance().getSetting().getIslandProvider()
-                                    .getIslandOwner(islandUUID);
-                            if (ownerUUID.isPresent()) {
-                                new PermissionGUI(player, islandUUID, ownerUUID.get(), new ArrayList<>(members)).open();
-                            }
-                        }
-                    });
-                    return true;
-                });
-            }
-        }
 
         return mask;
     }

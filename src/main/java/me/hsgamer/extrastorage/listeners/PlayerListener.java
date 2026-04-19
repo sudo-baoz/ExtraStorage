@@ -2,6 +2,7 @@ package me.hsgamer.extrastorage.listeners;
 
 import me.hsgamer.extrastorage.ExtraStorage;
 import me.hsgamer.extrastorage.data.user.UserManager;
+import me.hsgamer.extrastorage.hooks.island.IslandProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,6 +26,14 @@ public final class PlayerListener
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         manager.load(uuid);
+
+        // Ensure island shared storage is created/loaded as soon as a member joins.
+        if (instance.getSetting().isIslandEnabled() && instance.getIslandStorageManager() != null) {
+            IslandProvider islandProvider = instance.getSetting().getIslandProvider();
+            if (islandProvider.isHooked()) {
+                islandProvider.getIslandUUID(uuid).ifPresent(islandUUID -> instance.getIslandStorageManager().getIslandEntry(islandUUID));
+            }
+        }
     }
 
     @EventHandler

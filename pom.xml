@@ -38,7 +38,7 @@
 	</properties>
 
 	<build>
-		<finalName>${project.name}</finalName>
+		<finalName>TaroStorage</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -59,7 +59,16 @@
 						<goals><goal>shade</goal></goals>
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<minimizeJar>true</minimizeJar>
+							<minimizeJar>false</minimizeJar>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>paper-plugin.yml</exclude>
+										<exclude>bungee.yml</exclude>
+									</excludes>
+								</filter>
+							</filters>
 							<relocations>
 								<relocation>
 									<pattern>org.bstats</pattern>
@@ -234,7 +243,7 @@
 			<groupId>su.nightexpress.nightcore</groupId>
 			<artifactId>main</artifactId>
 			<version>2.14.1</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -348,10 +357,25 @@
 			<artifactId>minelib-scheduler-async</artifactId>
 			<version>${minelib.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.github.projectunified</groupId>
+			<artifactId>minelib-scheduler-common</artifactId>
+			<version>${minelib.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>io.github.projectunified</groupId>
 			<artifactId>craftitem-modifier</artifactId>
+			<version>${craftitem.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.projectunified</groupId>
+			<artifactId>craftitem-core</artifactId>
+			<version>${craftitem.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.projectunified</groupId>
+			<artifactId>craftitem-spigot-core</artifactId>
 			<version>${craftitem.version}</version>
 		</dependency>
 		<dependency>
@@ -364,10 +388,20 @@
 			<artifactId>craftitem-spigot-skull</artifactId>
 			<version>${craftitem.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.github.projectunified</groupId>
+			<artifactId>craftitem-spigot-skull-handler</artifactId>
+			<version>${craftitem.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>io.github.projectunified</groupId>
 			<artifactId>craftux-spigot</artifactId>
+			<version>${craftux.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.projectunified</groupId>
+			<artifactId>craftux-common</artifactId>
 			<version>${craftux.version}</version>
 		</dependency>
 		<dependency>

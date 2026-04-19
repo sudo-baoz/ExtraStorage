@@ -123,10 +123,19 @@ public final class ExtraStorage extends JavaPlugin {
 
     private void checkLicense() {
         LicenseTemplate template = new LicenseTemplate(new SpigotLicenseChecker("90379"), new PolymartLicenseChecker("860", true, true));
-        template.addDefaultMessage(this.getName());
         AsyncScheduler.get(this).run(() -> {
             Map.Entry<LicenseStatus, List<String>> result = template.getResult();
-            result.getValue().forEach(result.getKey() == LicenseStatus.VALID ? getLogger()::info : getLogger()::warning);
+            if (result.getKey() == LicenseStatus.VALID) {
+                return;
+            }
+            result.getValue().stream()
+                    .filter(line -> {
+                        String lower = line.toLowerCase();
+                        return !lower.contains("thank you for using")
+                                && !lower.contains("spigotmc.org/resources")
+                                && !lower.contains("polymart.org/product");
+                    })
+                    .forEach(getLogger()::warning);
         });
     }
 

@@ -1,12 +1,11 @@
 package me.hsgamer.extrastorage.hooks.island;
 
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblock;
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
 import com.bgsoftware.superiorskyblock.api.island.Island;
+import com.bgsoftware.superiorskyblock.api.island.IslandPrivilege;
 import com.bgsoftware.superiorskyblock.api.island.PlayerRole;
-import com.bgsoftware.superiorskyblock.api.island.SuperiorPlayer;
-import com.bgsoftware.superiorskyblock.api.privilege.IslandPrivilege;
-import com.bgsoftware.superiorskyblock.api.privilege.PrivilegeType;
-import com.bgsoftware.superiorskyblock.SuperiorSkyblock;
+import com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer;
 import me.hsgamer.extrastorage.ExtraStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,11 +42,33 @@ public class SuperiorSkyblockHook implements IslandProvider {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
             return;
         }
+        PRIVILEGE_WITHDRAW = getPrivilegeSafely("STORAGE_WITHDRAW");
+        if (PRIVILEGE_WITHDRAW == null) {
+            try {
+                IslandPrivilege.register("STORAGE_WITHDRAW", IslandPrivilege.Type.COMMAND);
+            } catch (IllegalStateException ignored) {
+                // Already registered by a previous load.
+            }
+            PRIVILEGE_WITHDRAW = getPrivilegeSafely("STORAGE_WITHDRAW");
+        }
+
+        PRIVILEGE_UPGRADE = getPrivilegeSafely("STORAGE_UPGRADE");
+        if (PRIVILEGE_UPGRADE == null) {
+            try {
+                IslandPrivilege.register("STORAGE_UPGRADE", IslandPrivilege.Type.COMMAND);
+            } catch (IllegalStateException ignored) {
+                // Already registered by a previous load.
+            }
+            PRIVILEGE_UPGRADE = getPrivilegeSafely("STORAGE_UPGRADE");
+        }
+    }
+
+    private static IslandPrivilege getPrivilegeSafely(String name) {
         try {
-            PRIVILEGE_WITHDRAW = IslandPrivilege.register("STORAGE_WITHDRAW", PrivilegeType.COMMAND);
-            PRIVILEGE_UPGRADE = IslandPrivilege.register("STORAGE_UPGRADE", PrivilegeType.COMMAND);
-        } catch (IllegalArgumentException ignored) {
-            // Already registered
+            return IslandPrivilege.getByName(name);
+        } catch (NullPointerException | IllegalArgumentException ignored) {
+            // Some SS2 versions throw instead of returning null when not found.
+            return null;
         }
     }
 
@@ -58,12 +79,14 @@ public class SuperiorSkyblockHook implements IslandProvider {
 
     private Island getIsland(UUID playerUuid) {
         if (!hooked) return null;
-        return SuperiorSkyblockAPI.getIslandByPlayer(playerUuid);
+        SuperiorPlayer superiorPlayer = getSuperiorPlayer(playerUuid);
+        if (superiorPlayer == null) return null;
+        return superiorPlayer.getIsland();
     }
 
     private Island getIslandByUUID(UUID islandUUID) {
         if (!hooked) return null;
-        return SuperiorSkyblockAPI.getIsland(islandUUID);
+        return SuperiorSkyblockAPI.getIslandByUUID(islandUUID);
     }
 
     private SuperiorPlayer getSuperiorPlayer(UUID playerUuid) {
@@ -75,7 +98,7 @@ public class SuperiorSkyblockHook implements IslandProvider {
     public Optional<UUID> getIslandUUID(UUID playerUuid) {
         Island island = getIsland(playerUuid);
         if (island == null) return Optional.empty();
-        return Optional.of(island.getUUID());
+        return Optional.of(island.getUniqueId());
     }
 
     @Override
@@ -93,16 +116,14 @@ public class SuperiorSkyblockHook implements IslandProvider {
 
         Island island = getIsland(player.getUniqueId());
         if (island == null) {
-            // Not on an island - fall back to normal permission check
-            return true;
+            return false;
         }
 
-        PlayerRole defaultRole = SuperiorSkyblockAPI.getRoles().getDefaultRole();
         SuperiorPlayer superiorPlayer = getSuperiorPlayer(player.getUniqueId());
         if (superiorPlayer == null) return false;
 
-        // Owner and Co-Owner (roles higher than default) can open storage
-        return superiorPlayer.getPlayerRole().isHigherThan(defaultRole);
+        // Any island member/coop can open the shared island storage.
+        return island.isMember(superiorPlayer) || island.isCoop(superiorPlayer);
     }
 
     @Override
@@ -119,6 +140,11 @@ public class SuperiorSkyblockHook implements IslandProvider {
 
         SuperiorPlayer superiorPlayer = getSuperiorPlayer(player.getUniqueId());
         if (superiorPlayer == null) return false;
+
+        // Default island behavior: members/coop can withdraw from shared storage.
+        if (island.isMember(superiorPlayer) || island.isCoop(superiorPlayer)) {
+            return true;
+        }
 
         if (PRIVILEGE_WITHDRAW == null) {
             // Fallback: only owner and co-owner can withdraw

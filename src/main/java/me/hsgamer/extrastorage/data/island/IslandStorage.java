@@ -4,7 +4,6 @@ import me.hsgamer.extrastorage.ExtraStorage;
 import me.hsgamer.extrastorage.api.item.Item;
 import me.hsgamer.extrastorage.api.storage.Storage;
 import me.hsgamer.extrastorage.data.Constants;
-import me.hsgamer.extrastorage.data.stub.StubItem;
 import me.hsgamer.extrastorage.data.user.ItemImpl;
 import me.hsgamer.extrastorage.util.Digital;
 import me.hsgamer.extrastorage.util.ItemUtil;
@@ -101,7 +100,7 @@ public class IslandStorage implements Storage {
         return entry.getValue().items.entrySet()
                 .stream()
                 .filter(e -> e.getValue().filtered)
-                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new StubItem(this, e.getKey())))
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new IslandItem(this, e.getKey())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -110,7 +109,7 @@ public class IslandStorage implements Storage {
         return entry.getValue().items.entrySet()
                 .stream()
                 .filter(e -> !e.getValue().filtered)
-                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new StubItem(this, e.getKey())))
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), new IslandItem(this, e.getKey())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -118,7 +117,7 @@ public class IslandStorage implements Storage {
     public Map<String, Item> getItems() {
         return entry.getValue().items.keySet()
                 .stream()
-                .map(k -> new AbstractMap.SimpleEntry<>(k, new StubItem(this, k)))
+                .map(k -> new AbstractMap.SimpleEntry<>(k, new IslandItem(this, k)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -129,7 +128,7 @@ public class IslandStorage implements Storage {
                 .stream()
                 .filter(e -> e.getKey().equals(validKey))
                 .findFirst()
-                .map(e -> new StubItem(this, e.getKey()));
+                .map(e -> new IslandItem(this, e.getKey()));
     }
 
     @Override
